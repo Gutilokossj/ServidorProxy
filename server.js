@@ -11,6 +11,9 @@ app.get('/proxy/consulta/:cnpj', async (req, res) => {
 
     try {
         const response = await fetch(apiUrl);
+        if (!response.ok) {
+            throw new Error('Erro ao acessar a API');
+        }
         const data = await response.json();
         res.json(data);
     } catch (error) {
@@ -21,3 +24,4 @@ app.get('/proxy/consulta/:cnpj', async (req, res) => {
 app.listen(port, () => {
     console.log(`Servidor proxy rodando na porta ${port}`);
 });
+
