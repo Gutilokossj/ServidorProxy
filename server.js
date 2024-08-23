@@ -1,9 +1,13 @@
 import express from 'express';
 import fetch from 'node-fetch';
 import cors from 'cors';  // Importar o pacote CORS
+import dotenv from 'dotenv';
+
+dotenv.config(); // Carregar variáveis de ambiente do arquivo .env
 
 const app = express();
 const port = process.env.PORT || 3001;
+
 
 // Configurar CORS
 app.use(cors({
@@ -18,7 +22,12 @@ app.get('/proxy/consulta/:cnpj', async (req, res) => {
     const apiUrl = `https://www.sistemaempresarialweb.com.br/backupsoften/consulta/${cnpj}`;
 
     try {
-        const response = await fetch(apiUrl);
+        const response = await fetch(apiUrl, {
+            headers: {
+                'Authorization': `Bearer ${process.env.API_TOKEN}` // Incluindo o token da variável de ambiente
+            }
+        });
+        
         if (!response.ok) {
             throw new Error('Erro ao acessar a API');
         }
