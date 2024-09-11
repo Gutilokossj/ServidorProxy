@@ -37,8 +37,8 @@ app.get('/proxy/consulta/:cnpj', async (req, res) => {
 });
 
 // Rota de proxy para a segunda API de consulta (com token)
-app.post('/proxy/release/:cnpj', async (req, res) => {
-    const { cnpj } = req.params;
+app.post('/proxy/release/', async (req, res) => {
+    const { cnpj } = req.body;
     const apiUrl = 'https://api.sistemaempresarialweb.com.br/release/monthly';
 
     // Certifique-se de que o corpo da requisição está correto
