@@ -38,7 +38,7 @@ app.get('/proxy/consulta/:cnpj', async (req, res) => {
 
 // Rota de proxy para a segunda API de consulta (com token)
 app.post('/proxy/release/', async (req, res) => {
-    const { document, origin } = req.body;
+    const { document, origin, token } = req.body;
 
     if (!document || !origin) {
         return res.status(400).json({ error: 'Document, origin are required' });
