@@ -43,12 +43,11 @@ app.post('/proxy/release/:cnpj', async (req, res) => {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${process.env.API_TOKEN_SECOND}` // Incluindo o token da variável de ambiente
             },
             body: JSON.stringify({
                 document: cnpj,
                 origin: 'SIEM',
-                token: process.env.API_TOKEN_SECOND // Se a API exige o token no corpo da requisição
+                token: process.env.API_TOKEN_SECOND // O token será enviado no corpo da requisição
             })
         });
 
