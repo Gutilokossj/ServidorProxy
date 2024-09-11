@@ -40,15 +40,18 @@ app.get('/proxy/consulta/:cnpj', async (req, res) => {
 app.post('/proxy/release/', async (req, res) => {
     const { document, origin } = req.body;
 
-    if (!document || !origin) {
-        return res.status(400).json({ error: 'Document and origin are required' });
+    if (!document || !origin || !process.env.API_TOKEN_SECOND) {
+        return res.status(400).json({ error: 'Document, origin, and token are required' });
     }
+
+     // Formatar o CNPJ
+     const formattedCNPJ = formatCNPJ(document);
 
     const apiUrl = 'https://api.sistemaempresarialweb.com.br/release/monthly';
 
     // Certifique-se de que o corpo da requisição está correto
     const requestBody = {
-        document: document,  // O CNPJ formatado deve ser passado diretamente
+        document: formattedCNPJ,  // O CNPJ formatado deve ser passado diretamente
         origin: origin,
         token: process.env.API_TOKEN_SECOND // O token será enviado no corpo da requisição
     };
@@ -57,12 +60,12 @@ app.post('/proxy/release/', async (req, res) => {
 
     try {
         const response = await fetch(apiUrl, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(requestBody)  // Certifique-se de que o requestBody está correto
-        });
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(requestBody)  // Certifique-se de que o requestBody está correto
+});
 
         console.log('Status da resposta da API 2:', response.status);
         
