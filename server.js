@@ -38,7 +38,14 @@ app.get('/proxy/consulta/:cnpj', async (req, res) => {
 app.post('/proxy/release/:cnpj', async (req, res) => {
     const { cnpj } = req.params;
     const apiUrl = 'https://api.sistemaempresarialweb.com.br/release/monthly';
-    console.log(`Consultando API 2 com CNPJ: ${cnpj}`); // Log do CNPJ
+
+    const requestBody = {
+        document: cnpj,
+        origin: 'SIEM',
+        token: process.env.API_TOKEN_SECOND // O token será enviado no corpo da requisição
+    };
+
+    console.log('Corpo da requisição para API 2:', JSON.stringify(requestBody));
 
     try {
         const response = await fetch(apiUrl, {
@@ -46,24 +53,21 @@ app.post('/proxy/release/:cnpj', async (req, res) => {
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({
-                document: cnpj,
-                origin: 'SIEM',
-                token: process.env.API_TOKEN_SECOND // O token será enviado no corpo da requisição
-            })
+            body: JSON.stringify(requestBody)
         });
 
-        if (!response.ok) {
-            console.error(`Erro ao acessar a API 2. Status: ${response.status}`); // Log do status
-            throw new Error('Erro ao acessar a API');
-        }
+        console.log('Status da resposta da API 2:', response.status);
+        
         const data = await response.json();
+        console.log('Dados retornados pela API 2:', data);
+
         res.json(data);
     } catch (error) {
-        console.error(`Erro ao consultar a API 2: ${error.message}`);
+        console.error('Erro ao consultar a API 2:', error);
         res.status(500).json({ error: 'Erro ao consultar a API.' });
     }
 });
+
 
 app.listen(port, () => {
     console.log(`Servidor proxy rodando na porta ${port}`);
