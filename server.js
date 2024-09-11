@@ -5,6 +5,15 @@ import dotenv from 'dotenv';
 
 dotenv.config(); // Carregar variáveis de ambiente do arquivo .env
 
+
+console.log('API_TOKEN_SECOND:', process.env.API_TOKEN_SECOND);
+
+console.log('Corpo da requisição para API 2:', JSON.stringify({
+    document: cnpj,
+    origin: 'SIEM',
+    token: process.env.API_TOKEN_SECOND
+}));
+
 const app = express();
 const port = process.env.PORT || 3001;
 
@@ -43,11 +52,12 @@ app.post('/proxy/release/:cnpj', async (req, res) => {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${process.env.API_TOKEN_SECOND}` // Se necessário
             },
             body: JSON.stringify({
                 document: cnpj,
                 origin: 'SIEM',
-                token: process.env.API_TOKEN_SECOND // O token será enviado no corpo da requisição
+                token: process.env.API_TOKEN_SECOND // Certifique-se de que este token é necessário aqui
             })
         });
 
@@ -60,6 +70,7 @@ app.post('/proxy/release/:cnpj', async (req, res) => {
         res.status(500).json({ error: 'Erro ao consultar a API.' });
     }
 });
+
 
 app.listen(port, () => {
     console.log(`Servidor proxy rodando na porta ${port}`);
