@@ -39,6 +39,10 @@ app.get('/proxy/consulta/:cnpj', async (req, res) => {
 // Rota de proxy para a segunda API de consulta (com token)
 app.post('/proxy/release/', async (req, res) => {
     const { cnpj } = req.body;
+
+    // Formata o CNPJ
+    cnpj = formatCNPJ(cnpj);
+
     const apiUrl = 'https://api.sistemaempresarialweb.com.br/release/monthly';
 
     // Certifique-se de que o corpo da requisição está correto
@@ -70,6 +74,12 @@ app.post('/proxy/release/', async (req, res) => {
         res.status(500).json({ error: 'Erro ao consultar a API.' });
     }
 });
+
+const formatCNPJ = (cnpj) => {
+    cnpj = cnpj.replace(/\D/g, '');
+    if (cnpj.length !== 14) return cnpj;
+    return cnpj.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/, '$1.$2.$3/$4-$5');
+};
 
 
 app.listen(port, () => {
