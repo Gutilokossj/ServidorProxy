@@ -61,7 +61,7 @@ app.post('/proxy/release/', async (req, res) => {
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(requestBody)
+            body: JSON.stringify(requestBody)  // Certifique-se de que o requestBody está correto
         });
 
         console.log('Status da resposta da API 2:', response.status);
