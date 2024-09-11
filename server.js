@@ -45,7 +45,7 @@ app.post('/proxy/release/', async (req, res) => {
     }
 
     // Use o token do corpo se fornecido, caso contrário, use o token do .env
-    const apiToken = token || process.env.API_TOKEN_SECOND;
+    const apiToken = req.body.token || process.env.API_TOKEN_SECOND;
 
     if (!apiToken) {
         return res.status(400).json({ error: 'Token is required' });
