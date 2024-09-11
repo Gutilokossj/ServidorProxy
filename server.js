@@ -40,8 +40,15 @@ app.get('/proxy/consulta/:cnpj', async (req, res) => {
 app.post('/proxy/release/', async (req, res) => {
     const { document, origin } = req.body;
 
-    if (!document || !origin || !process.env.API_TOKEN_SECOND) {
-        return res.status(400).json({ error: 'Document, origin, and token are required' });
+    if (!document || !origin) {
+        return res.status(400).json({ error: 'Document, origin are required' });
+    }
+
+    // Use o token do corpo se fornecido, caso contrário, use o token do .env
+    const apiToken = token || process.env.API_TOKEN_SECOND;
+
+    if (!apiToken) {
+        return res.status(400).json({ error: 'Token is required' });
     }
 
      // Formatar o CNPJ
@@ -53,7 +60,7 @@ app.post('/proxy/release/', async (req, res) => {
     const requestBody = {
         document: formattedCNPJ,  // O CNPJ formatado deve ser passado diretamente
         origin: origin,
-        token: process.env.API_TOKEN_SECOND // O token será enviado no corpo da requisição
+        token: apiToken // O token será enviado no corpo da requisição
     };
 
     console.log('Corpo da requisição para API 2:', JSON.stringify(requestBody));
