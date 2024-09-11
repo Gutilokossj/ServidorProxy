@@ -38,17 +38,18 @@ app.get('/proxy/consulta/:cnpj', async (req, res) => {
 
 // Rota de proxy para a segunda API de consulta (com token)
 app.post('/proxy/release/', async (req, res) => {
-    const { cnpj } = req.body;
+    const { document, origin } = req.body;
 
-    // Formata o CNPJ
-    cnpj = formatCNPJ(cnpj);
+    if (!document || !origin) {
+        return res.status(400).json({ error: 'Document and origin are required' });
+    }
 
     const apiUrl = 'https://api.sistemaempresarialweb.com.br/release/monthly';
 
     // Certifique-se de que o corpo da requisição está correto
     const requestBody = {
-        document: cnpj,
-        origin: 'SIEM',
+        document: document,  // O CNPJ formatado deve ser passado diretamente
+        origin: origin,
         token: process.env.API_TOKEN_SECOND // O token será enviado no corpo da requisição
     };
 
@@ -65,6 +66,10 @@ app.post('/proxy/release/', async (req, res) => {
 
         console.log('Status da resposta da API 2:', response.status);
         
+        if (!response.ok) {
+            throw new Error('Erro ao consultar a API 2');
+        }
+
         const data = await response.json();
         console.log('Dados retornados pela API 2:', data);
 
@@ -76,8 +81,6 @@ app.post('/proxy/release/', async (req, res) => {
 });
 
 const formatCNPJ = (cnpj) => {
-    cnpj = cnpj.replace(/\D/g, '');
-    if (cnpj.length !== 14) return cnpj;
     return cnpj.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/, '$1.$2.$3/$4-$5');
 };
 
