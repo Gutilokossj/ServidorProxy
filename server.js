@@ -8,6 +8,8 @@ dotenv.config(); // Carregar variáveis de ambiente do arquivo .env
 const app = express();
 const port = process.env.PORT || 3001;
 
+app.use(express.json()); // Adiciona middleware para interpretar JSON
+
 
 // Configurar CORS
 app.use(cors({
@@ -39,6 +41,7 @@ app.post('/proxy/release/:cnpj', async (req, res) => {
     const { cnpj } = req.params;
     const apiUrl = 'https://api.sistemaempresarialweb.com.br/release/monthly';
 
+    // Certifique-se de que o corpo da requisição está correto
     const requestBody = {
         document: cnpj,
         origin: 'SIEM',
@@ -61,7 +64,7 @@ app.post('/proxy/release/:cnpj', async (req, res) => {
         const data = await response.json();
         console.log('Dados retornados pela API 2:', data);
 
-        res.json(data);
+        res.json(data); // Retorna a resposta da API 2 para o cliente
     } catch (error) {
         console.error('Erro ao consultar a API 2:', error);
         res.status(500).json({ error: 'Erro ao consultar a API.' });
