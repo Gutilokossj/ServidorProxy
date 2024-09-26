@@ -14,7 +14,7 @@ app.use(express.json()); // Adiciona middleware para interpretar JSON
 // Configurar CORS
 app.use(cors({
     origin: '*',  // Permitir solicitações de qualquer origem. Ajuste conforme necessário.
-    methods: 'GET,POST',
+    methods: 'GET, POST, DELETE',  // Adicione DELETE aqui
     allowedHeaders: 'Content-Type',
 }));
 
