@@ -98,3 +98,30 @@ const formatCNPJ = (cnpj) => {
 app.listen(port, () => {
     console.log(`Servidor proxy rodando na porta ${port}`);
 });
+
+// Rota de proxy para resetar o envio de XML
+app.post('/proxy/resetEnvio/:cnpj', async (req, res) => {
+    const { cnpj } = req.params;
+    const apiUrl = `https://www.sistemaempresarialweb.com.br/backupsoften/limparEnvioContador/${cnpj}`;
+
+    try {
+        const response = await fetch(apiUrl, {
+            method: 'POST',  // Requisição POST
+            headers: {
+                'Content-Type': 'application/json',
+                // Adicione qualquer cabeçalho necessário aqui
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`Erro ao resetar o envio de XML. Status: ${response.status}`);
+        }
+
+        const data = await response.json();  // Caso a API retorne JSON
+        res.json(data);  // Retorna a resposta da API para o frontend
+    } catch (error) {
+        console.error('Erro ao resetar o envio de XML:', error);
+        res.status(500).json({ error: 'Erro ao resetar o envio de XML.' });
+    }
+});
+
