@@ -100,15 +100,15 @@ app.listen(port, () => {
 });
 
 // Rota de proxy para resetar o envio de XML
-app.delete('/proxy/resetEnvio/:cnpj', async (req, res) => {  // Alterar para DELETE
+app.delete('/proxy/resetEnvio/:cnpj', async (req, res) => {
     const { cnpj } = req.params;
     const apiUrl = `https://www.sistemaempresarialweb.com.br/backupsoften/limparEnvioContador/${cnpj}`;
 
     try {
         const response = await fetch(apiUrl, {
-            method: 'DELETE',  // Requisição DELETE
+            method: 'DELETE',  // Método DELETE
             headers: {
-                'Content-Type': 'application/json',
+                // Não precisa de Content-Type se não estamos enviando um corpo
             }
         });
 
@@ -116,12 +116,13 @@ app.delete('/proxy/resetEnvio/:cnpj', async (req, res) => {  // Alterar para DEL
             throw new Error(`Erro ao resetar o envio de XML. Status: ${response.status}`);
         }
 
-        const data = await response.json();  // Caso a API retorne JSON
-        res.json(data);  // Retorna a resposta da API para o frontend
+        const data = await response.text();  // Se a resposta for um texto simples
+        res.send(data);  // Retorna a resposta da API para o frontend
     } catch (error) {
         console.error('Erro ao resetar o envio de XML:', error);
         res.status(500).json({ error: 'Erro ao resetar o envio de XML.' });
     }
 });
+
 
 
